@@ -1,0 +1,111 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790869299332,
+      "tag": "0000_create_enquiries",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790869310881,
+      "tag": "0001_user_roles_and_has_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790869320219,
+      "tag": "0002_enquiries_status_staff_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790869328795,
+      "tag": "0003_revoke_function_execute",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790869336324,
+      "tag": "0004_tighten_function_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790869351275,
+      "tag": "0005_enquiry_policies_use_exists",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790869360986,
+      "tag": "0006_enquiries_subjects",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790869383156,
+      "tag": "0007_create_registrations",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790869391630,
+      "tag": "0008_enquiries_archived",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790869405491,
+      "tag": "0009_pages_and_site_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790869424854,
+      "tag": "0010_staff_fees_packages",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790869434976,
+      "tag": "0011_homepage_public_read",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790869444245,
+      "tag": "0012_homepage_settings_seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790869453053,
+      "tag": "0013_site_images_storage_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790869468216,
+      "tag": "0014_registrations_self_view",
+      "breakpoints": true
+    }
+  ]
+}
