@@ -99,6 +99,13 @@
       "when": 1790869453053,
       "tag": "0013_site_images_storage_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790869468216,
+      "tag": "0014_registrations_self_view",
+      "breakpoints": true
     }
   ]
 }
