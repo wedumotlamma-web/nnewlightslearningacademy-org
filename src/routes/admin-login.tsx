@@ -104,6 +104,29 @@ function AdminLogin() {
     }
   }
 
+  async function handleAppleSignIn() {
+    setLoading(true);
+    setError(null);
+    try {
+      const { lovable } = await import("@/integrations/lovable");
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      if (!(await currentUserIsAdmin())) {
+        await supabase.auth.signOut();
+        throw new Error("This account does not have administrator access.");
+      }
+      toast.success("Welcome back");
+      navigate({ to: "/admin", replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Apple sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleForgotPassword() {
     if (!email) {
       setError("Enter your email address first, then tap “Forgot password?”.");
