@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.4",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ldtvqzfuxbkodxgbjcrc.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "new-lights-learning-academy",
+      "version": "0.1.0",
+      "title": "New-Lights Learning Academy"
+    },
+    "tools": [
+      {
+        "name": "list_enquiries",
+        "title": "List enquiries",
+        "description": "List recent parent enquiries (staff only), optionally filtered by status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by status, e.g. new, contacted, enrolled.",
+              "type": "string"
+            },
+            "include_archived": {
+              "description": "Include archived enquiries.",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "Max rows (default 25).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "update_enquiry",
+        "title": "Update enquiry",
+        "description": "Change an enquiry's status and/or staff notes (staff only).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Enquiry id."
+            },
+            "status": {
+              "description": "New status.",
+              "type": "string",
+              "minLength": 1
+            },
+            "staff_notes": {
+              "description": "Replacement staff notes.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_registration",
+        "title": "Get my registration",
+        "description": "Show the signed-in learner's registration: subjects, class level and attendance mode.",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
