@@ -102,6 +102,23 @@ function AuthPage() {
     }
   }
 
+  async function handleAppleSignIn() {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      toast.success("Signed in with Apple");
+      navigate({ to: await destinationForCurrentUser(), replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Apple sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-secondary px-4 py-16">
       <Card className="w-full max-w-md">
