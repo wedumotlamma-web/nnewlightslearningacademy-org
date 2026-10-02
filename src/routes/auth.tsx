@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { lovable } from "@/integrations/lovable";
+import "@lovable.dev/cloud-auth-js/styles.css";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,6 +103,40 @@ function AuthPage() {
     }
   }
 
+  async function handleLovableSignIn() {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("lovable", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      toast.success("Signed in with Lovable");
+      navigate({ to: await destinationForCurrentUser(), replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Lovable sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleMicrosoftSignIn() {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("microsoft", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      toast.success("Signed in with Microsoft");
+      navigate({ to: await destinationForCurrentUser(), replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Microsoft sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleAppleSignIn() {
     setLoading(true);
     try {
@@ -181,6 +216,44 @@ function AuthPage() {
             </svg>
             Continue with Google
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-2 w-full"
+            disabled={loading}
+            onClick={handleAppleSignIn}
+          >
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.2 1.92-.86 3.24-.77 1.58.13 2.77.75 3.55 1.9-3.27 1.96-2.5 6.27.53 7.5-.6 1.57-1.37 3.13-2.4 3.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
+              />
+            </svg>
+            Continue with Apple
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-2 w-full"
+            disabled={loading}
+            onClick={handleMicrosoftSignIn}
+          >
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#f35325" d="M1 1h10v10H1z" />
+              <path fill="#81bc06" d="M13 1h10v10H13z" />
+              <path fill="#05a6f0" d="M1 13h10v10H1z" />
+              <path fill="#ffba08" d="M13 13h10v10H13z" />
+            </svg>
+            Continue with Microsoft
+          </Button>
+          <button
+            type="button"
+            className="lovable-auth-button mt-2 w-full"
+            disabled={loading}
+            onClick={handleLovableSignIn}
+          >
+            Continue with Lovable
+          </button>
           <button
             type="button"
             className="mt-4 w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
