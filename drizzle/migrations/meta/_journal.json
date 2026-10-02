@@ -106,6 +106,13 @@
       "when": 1790869468216,
       "tag": "0014_registrations_self_view",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1790933281031,
+      "tag": "0015_restrict_site_images_read",
+      "breakpoints": true
     }
   ]
 }
