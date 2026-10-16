@@ -113,6 +113,13 @@
       "when": 1790933281031,
       "tag": "0015_restrict_site_images_read",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792151630771,
+      "tag": "0016_restrict_pages_and_settings_reads",
+      "breakpoints": true
     }
   ]
 }
