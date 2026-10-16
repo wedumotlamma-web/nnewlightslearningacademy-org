@@ -79,6 +79,8 @@ function HomepageEditor() {
         },
         { key: HOMEPAGE_KEYS.contactHeading, value: values.contactHeading },
         { key: HOMEPAGE_KEYS.contactIntro, value: values.contactIntro },
+        { key: HOMEPAGE_KEYS.logoPath, value: values.logoPath },
+        { key: HOMEPAGE_KEYS.heroImagePath, value: values.heroImagePath },
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
@@ -94,7 +96,9 @@ function HomepageEditor() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const paths = draft.gallery.map((g) => g.path).filter((path) => !previews[path]);
+    const paths = [...draft.gallery.map((g) => g.path), draft.logoPath, draft.heroImagePath]
+      .filter(Boolean)
+      .filter((path) => !previews[path]);
     if (paths.length === 0) return;
     let cancelled = false;
     void (async () => {
@@ -113,7 +117,7 @@ function HomepageEditor() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draft.gallery]);
+  }, [draft.gallery, draft.logoPath, draft.heroImagePath]);
 
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -136,6 +140,41 @@ function HomepageEditor() {
     } finally {
       setUploading(false);
     }
+  }
+
+  const [uploadingSingle, setUploadingSingle] = useState<null | "logoPath" | "heroImagePath">(null);
+
+  async function uploadSingle(field: "logoPath" | "heroImagePath", files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image must be 10 MB or smaller");
+      return;
+    }
+    setUploadingSingle(field);
+    try {
+      const folder = field === "logoPath" ? "logo" : "hero";
+      const path = `${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "-")}`;
+      const { error } = await supabase.storage
+        .from(GALLERY_BUCKET)
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+      if (error) throw error;
+      const old = draft[field];
+      if (old) await supabase.storage.from(GALLERY_BUCKET).remove([old]);
+      setDraft((prev) => ({ ...prev, [field]: path }));
+      toast.success("Image uploaded — remember to save");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploadingSingle(null);
+    }
+  }
+
+  async function removeSingle(field: "logoPath" | "heroImagePath") {
+    const old = draft[field];
+    if (old) await supabase.storage.from(GALLERY_BUCKET).remove([old]);
+    setDraft((prev) => ({ ...prev, [field]: "" }));
+    toast.success("Image removed — remember to save");
   }
 
   async function removeImage(path: string) {
@@ -345,6 +384,51 @@ function HomepageEditor() {
                 >
                   <Plus className="mr-2 h-4 w-4" /> Add course
                 </Button>
+              </CardContent>
+            </Card>
+
+            {/* Logo & main photo */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Logo &amp; main photo</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-6 sm:grid-cols-2">
+                {([
+                  { field: "logoPath", label: "Website logo", hint: "PNG with a transparent background works best." },
+                  { field: "heroImagePath", label: "Main homepage photo", hint: "A wide landscape photo works best." },
+                ] as const).map(({ field, label, hint }) => (
+                  <div key={field} className="space-y-3">
+                    <Label htmlFor={`${field}-upload`}>{label}</Label>
+                    <div className="flex h-36 items-center justify-center overflow-hidden rounded-lg border bg-muted">
+                      {draft[field] && previews[draft[field]] ? (
+                        <img src={previews[draft[field]]} alt={label} className="h-full w-full object-contain" />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          {draft[field] ? "Loading…" : "Using the default image"}
+                        </span>
+                      )}
+                    </div>
+                    <input
+                      id={`${field}-upload`}
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingSingle !== null}
+                      onChange={(e) => {
+                        void uploadSingle(field, e.target.files);
+                        e.target.value = "";
+                      }}
+                      className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border file:border-border file:bg-secondary file:px-3 file:py-2 file:text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      {uploadingSingle === field ? "Uploading…" : `${hint} Up to 10 MB.`}
+                    </p>
+                    {draft[field] && (
+                      <Button variant="outline" size="sm" onClick={() => void removeSingle(field)}>
+                        <Trash2 className="mr-2 h-4 w-4" /> Remove and use default
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </CardContent>
             </Card>
 
