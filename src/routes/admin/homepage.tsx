@@ -81,6 +81,8 @@ function HomepageEditor() {
         { key: HOMEPAGE_KEYS.contactIntro, value: values.contactIntro },
         { key: HOMEPAGE_KEYS.logoPath, value: values.logoPath },
         { key: HOMEPAGE_KEYS.heroImagePath, value: values.heroImagePath },
+        { key: HOMEPAGE_KEYS.classroomImagePath, value: values.classroomImagePath },
+        { key: HOMEPAGE_KEYS.homeschoolImagePath, value: values.homeschoolImagePath },
       ];
       const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });
       if (error) throw error;
@@ -96,8 +98,13 @@ function HomepageEditor() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const paths = [...draft.gallery.map((g) => g.path), draft.logoPath, draft.heroImagePath]
-      .filter(Boolean)
+    const paths = [
+      ...draft.gallery.map((g) => g.path),
+      draft.logoPath,
+      draft.heroImagePath,
+      draft.classroomImagePath,
+      draft.homeschoolImagePath,
+    ].filter(Boolean)
       .filter((path) => !previews[path]);
     if (paths.length === 0) return;
     let cancelled = false;
@@ -117,7 +124,7 @@ function HomepageEditor() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draft.gallery, draft.logoPath, draft.heroImagePath]);
+  }, [draft.gallery, draft.logoPath, draft.heroImagePath, draft.classroomImagePath, draft.homeschoolImagePath]);
 
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -142,9 +149,10 @@ function HomepageEditor() {
     }
   }
 
-  const [uploadingSingle, setUploadingSingle] = useState<null | "logoPath" | "heroImagePath">(null);
+  type SingleField = "logoPath" | "heroImagePath" | "classroomImagePath" | "homeschoolImagePath";
+  const [uploadingSingle, setUploadingSingle] = useState<null | SingleField>(null);
 
-  async function uploadSingle(field: "logoPath" | "heroImagePath", files: FileList | null) {
+  async function uploadSingle(field: SingleField, files: FileList | null) {
     const file = files?.[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
@@ -153,7 +161,14 @@ function HomepageEditor() {
     }
     setUploadingSingle(field);
     try {
-      const folder = field === "logoPath" ? "logo" : "hero";
+      const folder =
+        field === "logoPath"
+          ? "logo"
+          : field === "heroImagePath"
+            ? "hero"
+            : field === "classroomImagePath"
+              ? "classroom"
+              : "homeschool";
       const path = `${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "-")}`;
       const { error } = await supabase.storage
         .from(GALLERY_BUCKET)
@@ -170,7 +185,7 @@ function HomepageEditor() {
     }
   }
 
-  async function removeSingle(field: "logoPath" | "heroImagePath") {
+  async function removeSingle(field: SingleField) {
     const old = draft[field];
     if (old) await supabase.storage.from(GALLERY_BUCKET).remove([old]);
     setDraft((prev) => ({ ...prev, [field]: "" }));
@@ -387,15 +402,17 @@ function HomepageEditor() {
               </CardContent>
             </Card>
 
-            {/* Logo & main photo */}
+            {/* Site images */}
             <Card>
               <CardHeader>
-                <CardTitle>Logo &amp; main photo</CardTitle>
+                <CardTitle>Site images</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-6 sm:grid-cols-2">
                 {([
                   { field: "logoPath", label: "Website logo", hint: "PNG with a transparent background works best." },
                   { field: "heroImagePath", label: "Main homepage photo", hint: "A wide landscape photo works best." },
+                  { field: "classroomImagePath", label: "About section photo", hint: "Shown next to the About text." },
+                  { field: "homeschoolImagePath", label: "Homeschooling photo", hint: "Shown in the homeschooling section." },
                 ] as const).map(({ field, label, hint }) => (
                   <div key={field} className="space-y-3">
                     <Label htmlFor={`${field}-upload`}>{label}</Label>
@@ -404,7 +421,7 @@ function HomepageEditor() {
                         <img src={previews[draft[field]]} alt={label} className="h-full w-full object-contain" />
                       ) : (
                         <span className="text-xs text-muted-foreground">
-                          {draft[field] ? "Loading…" : "Using the default image"}
+                          {draft[field] ? "Loading…" : "No image uploaded yet"}
                         </span>
                       )}
                     </div>
@@ -424,7 +441,7 @@ function HomepageEditor() {
                     </p>
                     {draft[field] && (
                       <Button variant="outline" size="sm" onClick={() => void removeSingle(field)}>
-                        <Trash2 className="mr-2 h-4 w-4" /> Remove and use default
+                        <Trash2 className="mr-2 h-4 w-4" /> Remove image
                       </Button>
                     )}
                   </div>
