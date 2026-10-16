@@ -50,8 +50,8 @@ export type HomepageContent = {
   contactIntro: string;
   logoPath: string;
   heroImagePath: string;
-  logoUrl?: string;
-  heroImageUrl?: string;
+  logoUrl?: string | undefined;
+  heroImageUrl?: string | undefined;
 };
 
 export const HOMEPAGE_KEYS = {
