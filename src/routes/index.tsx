@@ -17,11 +17,6 @@ import {
   Users,
 } from "lucide-react";
 
-import sealLogo from "@/assets/logo-seal.png";
-import horizontalLogo from "@/assets/logo-horizontal.png";
-import heroImage from "@/assets/hero-tutoring.jpg";
-import homeschoolImage from "@/assets/homeschool.jpg";
-import classroomImage from "@/assets/classroom.jpg";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { subjectGroups } from "@/lib/site";
 import {
@@ -169,13 +164,17 @@ function HomePage({ content }: { content: HomepageContent }) {
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
           <a href="#top" className="flex items-center gap-2">
-            <img
-              src={content.logoUrl ?? horizontalLogo}
-              alt={content.academyName}
-              width={680}
-              height={480}
-              className="h-11 w-auto object-contain sm:h-14"
-            />
+            {content.logoUrl ? (
+              <img
+                src={content.logoUrl}
+                alt={content.academyName}
+                width={680}
+                height={480}
+                className="h-11 w-auto object-contain sm:h-14"
+              />
+            ) : (
+              <span className="font-display text-lg font-bold">{content.academyName}</span>
+            )}
           </a>
           <nav className="hidden items-center gap-7 md:flex" aria-label="Main">
             {navLinks.map((link) => (
@@ -258,13 +257,22 @@ function HomePage({ content }: { content: HomepageContent }) {
               </dl>
             </div>
             <div className="relative">
-              <img
-                src={content.heroImageUrl ?? heroImage}
-                alt="A tutor guiding two secondary school learners through their work at New-Lights Learning Academy"
-                width={1600}
-                height={1104}
-                className="rounded-lg border border-gold/25 shadow-elegant"
-              />
+              {content.heroImageUrl ? (
+                <img
+                  src={content.heroImageUrl}
+                  alt="Learners at New-Lights Learning Academy"
+                  width={1600}
+                  height={1104}
+                  className="rounded-lg border border-gold/25 shadow-elegant"
+                />
+              ) : (
+                <div
+                  className="flex aspect-[4/3] items-center justify-center rounded-lg border border-gold/25 bg-navy-foreground/5 shadow-elegant"
+                  aria-hidden="true"
+                >
+                  <span className="font-display text-6xl font-bold text-gold/40">NL</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -272,14 +280,23 @@ function HomePage({ content }: { content: HomepageContent }) {
         {/* About */}
         <section className="mx-auto max-w-6xl px-5 py-16" aria-labelledby="about-heading">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <img
-              src={classroomImage}
-              alt="Learners working in a small tuition class at the centre"
-              width={1200}
-              height={900}
-              loading="lazy"
-              className="rounded-lg border border-border shadow-card"
-            />
+            {content.classroomImageUrl ? (
+              <img
+                src={content.classroomImageUrl}
+                alt="Learners working in a small tuition class at the centre"
+                width={1200}
+                height={900}
+                loading="lazy"
+                className="rounded-lg border border-border shadow-card"
+              />
+            ) : (
+              <div
+                className="flex aspect-[4/3] items-center justify-center rounded-lg border border-border bg-muted shadow-card"
+                aria-hidden="true"
+              >
+                <span className="font-display text-5xl font-bold text-muted-foreground/30">NL</span>
+              </div>
+            )}
             <div>
               <h2 id="about-heading" className="rule-gold font-display text-2xl font-bold sm:text-3xl">
                 {content.aboutHeading}
@@ -381,14 +398,23 @@ function HomePage({ content }: { content: HomepageContent }) {
                 ))}
               </ul>
             </div>
-            <img
-              src={homeschoolImage}
-              alt="A parent and child studying together as part of the supported homeschooling programme"
-              width={1200}
-              height={900}
-              loading="lazy"
-              className="rounded-lg border border-border shadow-card"
-            />
+            {content.homeschoolImageUrl ? (
+              <img
+                src={content.homeschoolImageUrl}
+                alt="A parent and child studying together as part of the supported homeschooling programme"
+                width={1200}
+                height={900}
+                loading="lazy"
+                className="rounded-lg border border-border shadow-card"
+              />
+            ) : (
+              <div
+                className="flex aspect-[4/3] items-center justify-center rounded-lg border border-border bg-muted shadow-card"
+                aria-hidden="true"
+              >
+                <span className="font-display text-5xl font-bold text-muted-foreground/30">NL</span>
+              </div>
+            )}
           </div>
         </section>
 
@@ -578,14 +604,23 @@ function HomePage({ content }: { content: HomepageContent }) {
       <footer className="bg-gradient-navy py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-navy-foreground/70 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src={content.logoUrl ?? sealLogo}
-              alt={`${content.academyName} crest`}
-              width={48}
-              height={48}
-              loading="lazy"
-              className="h-12 w-12 object-contain"
-            />
+            {content.logoUrl ? (
+              <img
+                src={content.logoUrl}
+                alt={`${content.academyName} crest`}
+                width={48}
+                height={48}
+                loading="lazy"
+                className="h-12 w-12 object-contain"
+              />
+            ) : (
+              <span
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 font-display text-sm font-bold text-gold"
+                aria-hidden="true"
+              >
+                NL
+              </span>
+            )}
             <div>
               <p className="font-display font-bold text-navy-foreground">{content.academyName}</p>
               <p className="text-xs text-gold">{content.tagline}</p>
