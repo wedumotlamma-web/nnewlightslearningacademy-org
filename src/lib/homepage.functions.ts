@@ -48,6 +48,10 @@ export type HomepageContent = {
   gallery: GalleryImage[];
   contactHeading: string;
   contactIntro: string;
+  logoPath: string;
+  heroImagePath: string;
+  logoUrl?: string;
+  heroImageUrl?: string;
 };
 
 export const HOMEPAGE_KEYS = {
@@ -75,6 +79,8 @@ export const HOMEPAGE_KEYS = {
   gallery: "homepage_gallery",
   contactHeading: "homepage_contact_heading",
   contactIntro: "homepage_contact_intro",
+  logoPath: "homepage_logo_path",
+  heroImagePath: "homepage_hero_image_path",
 } as const;
 
 export const GALLERY_BUCKET = "site-images";
@@ -180,6 +186,8 @@ export function buildHomepageContent(rows: { key: string; value: string | null }
     gallery: parseJson<GalleryImage[]>(map.get(HOMEPAGE_KEYS.gallery), homepageFallback.gallery),
     contactHeading: text(HOMEPAGE_KEYS.contactHeading, homepageFallback.contactHeading),
     contactIntro: text(HOMEPAGE_KEYS.contactIntro, homepageFallback.contactIntro),
+    logoPath: map.get(HOMEPAGE_KEYS.logoPath)?.trim() ?? "",
+    heroImagePath: map.get(HOMEPAGE_KEYS.heroImagePath)?.trim() ?? "",
   };
 }
 
@@ -211,14 +219,15 @@ export const getHomepageContent = createServerFn({ method: "GET" }).handler(
     if (error || !data) return homepageFallback;
     const content = buildHomepageContent(data);
 
-    if (content.gallery.length > 0) {
+    const singles = [content.logoPath, content.heroImagePath].filter(Boolean);
+    if (content.gallery.length > 0 || singles.length > 0) {
       // Signed URLs are minted with the server-side admin client so the storage
       // bucket can stay closed to anonymous direct downloads.
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data: signed } = await supabaseAdmin.storage
         .from(GALLERY_BUCKET)
         .createSignedUrls(
-          content.gallery.map((image) => image.path),
+          [...content.gallery.map((image) => image.path), ...singles],
           60 * 60 * 24,
         );
       if (signed) {
@@ -226,6 +235,10 @@ export const getHomepageContent = createServerFn({ method: "GET" }).handler(
           ...image,
           url: signed[index]?.signedUrl ?? undefined,
         }));
+        const byPath = new Map(signed.map((s) => [s.path, s.signedUrl]));
+        if (content.logoPath) content.logoUrl = byPath.get(content.logoPath) ?? undefined;
+        if (content.heroImagePath)
+          content.heroImageUrl = byPath.get(content.heroImagePath) ?? undefined;
       }
     }
 
