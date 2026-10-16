@@ -170,7 +170,7 @@ function HomePage({ content }: { content: HomepageContent }) {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
           <a href="#top" className="flex items-center gap-2">
             <img
-              src={horizontalLogo}
+              src={content.logoUrl ?? horizontalLogo}
               alt={content.academyName}
               width={680}
               height={480}
@@ -259,7 +259,7 @@ function HomePage({ content }: { content: HomepageContent }) {
             </div>
             <div className="relative">
               <img
-                src={heroImage}
+                src={content.heroImageUrl ?? heroImage}
                 alt="A tutor guiding two secondary school learners through their work at New-Lights Learning Academy"
                 width={1600}
                 height={1104}
@@ -579,7 +579,7 @@ function HomePage({ content }: { content: HomepageContent }) {
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 text-sm text-navy-foreground/70 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <img
-              src={sealLogo}
+              src={content.logoUrl ?? sealLogo}
               alt={`${content.academyName} crest`}
               width={48}
               height={48}

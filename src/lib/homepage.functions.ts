@@ -143,6 +143,8 @@ export const homepageFallback: HomepageContent = {
   contactHeading: "Book a free assessment",
   contactIntro:
     "Send us your details and we'll be in touch within one working day to arrange a convenient time.",
+  logoPath: "",
+  heroImagePath: "",
 };
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
