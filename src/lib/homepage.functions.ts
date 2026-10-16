@@ -50,8 +50,12 @@ export type HomepageContent = {
   contactIntro: string;
   logoPath: string;
   heroImagePath: string;
+  classroomImagePath: string;
+  homeschoolImagePath: string;
   logoUrl?: string | undefined;
   heroImageUrl?: string | undefined;
+  classroomImageUrl?: string | undefined;
+  homeschoolImageUrl?: string | undefined;
 };
 
 export const HOMEPAGE_KEYS = {
@@ -81,6 +85,8 @@ export const HOMEPAGE_KEYS = {
   contactIntro: "homepage_contact_intro",
   logoPath: "homepage_logo_path",
   heroImagePath: "homepage_hero_image_path",
+  classroomImagePath: "homepage_classroom_image_path",
+  homeschoolImagePath: "homepage_homeschool_image_path",
 } as const;
 
 export const GALLERY_BUCKET = "site-images";
@@ -145,6 +151,8 @@ export const homepageFallback: HomepageContent = {
     "Send us your details and we'll be in touch within one working day to arrange a convenient time.",
   logoPath: "",
   heroImagePath: "",
+  classroomImagePath: "",
+  homeschoolImagePath: "",
 };
 
 function parseJson<T>(value: string | null | undefined, fallback: T): T {
@@ -190,6 +198,8 @@ export function buildHomepageContent(rows: { key: string; value: string | null }
     contactIntro: text(HOMEPAGE_KEYS.contactIntro, homepageFallback.contactIntro),
     logoPath: map.get(HOMEPAGE_KEYS.logoPath)?.trim() ?? "",
     heroImagePath: map.get(HOMEPAGE_KEYS.heroImagePath)?.trim() ?? "",
+    classroomImagePath: map.get(HOMEPAGE_KEYS.classroomImagePath)?.trim() ?? "",
+    homeschoolImagePath: map.get(HOMEPAGE_KEYS.homeschoolImagePath)?.trim() ?? "",
   };
 }
 
@@ -221,7 +231,12 @@ export const getHomepageContent = createServerFn({ method: "GET" }).handler(
     if (error || !data) return homepageFallback;
     const content = buildHomepageContent(data);
 
-    const singles = [content.logoPath, content.heroImagePath].filter(Boolean);
+    const singles = [
+      content.logoPath,
+      content.heroImagePath,
+      content.classroomImagePath,
+      content.homeschoolImagePath,
+    ].filter(Boolean);
     if (content.gallery.length > 0 || singles.length > 0) {
       // Signed URLs are minted with the server-side admin client so the storage
       // bucket can stay closed to anonymous direct downloads.
@@ -241,6 +256,10 @@ export const getHomepageContent = createServerFn({ method: "GET" }).handler(
         if (content.logoPath) content.logoUrl = byPath.get(content.logoPath) ?? undefined;
         if (content.heroImagePath)
           content.heroImageUrl = byPath.get(content.heroImagePath) ?? undefined;
+        if (content.classroomImagePath)
+          content.classroomImageUrl = byPath.get(content.classroomImagePath) ?? undefined;
+        if (content.homeschoolImagePath)
+          content.homeschoolImageUrl = byPath.get(content.homeschoolImagePath) ?? undefined;
       }
     }
 
