@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import sealLogo from "@/assets/logo-seal.png";
 
 export const Route = createFileRoute("/admin-login")({
   head: () => ({
@@ -198,11 +197,12 @@ function AdminLogin() {
     <main className="flex min-h-screen items-center justify-center bg-secondary px-4 py-16">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <img
-            src={sealLogo}
-            alt="New-Lights Learning Academy crest"
-            className="mx-auto h-20 w-20 object-contain"
-          />
+          <span
+            className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-gold/40 font-display text-2xl font-bold text-gold"
+            aria-hidden="true"
+          >
+            NL
+          </span>
           <CardTitle className="mt-4 flex items-center justify-center gap-2 font-display text-2xl">
             <ShieldCheck className="h-5 w-5 text-gold" aria-hidden="true" />
             Administrator login
