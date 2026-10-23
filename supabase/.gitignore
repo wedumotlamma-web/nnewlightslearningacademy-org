@@ -1,0 +1,5 @@
+# Supabase local dev ignores
+.env
+.env.local
+*.log
+.tmp/
